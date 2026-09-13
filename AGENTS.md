@@ -23,7 +23,7 @@ Three copies of this project exist. They are not equal.
 
 | Copy | Path / location | Role |
 |---|---|---|
-| **Local folder** | `~/Projects/dev/00-fomo-system/` | **Source of truth.** All work happens here. |
+| **Local folder** | `~/Projects/00-fomo-standards/` | **Source of truth.** All work happens here. |
 | **GitHub repo** | `github.com/exlennis/fomof` (`origin/main`) | Backup mirror and relay. Never edited directly. |
 | **claude.ai project knowledge** | "FOMO System" project | Synced snapshot, read-only downstream. |
 
