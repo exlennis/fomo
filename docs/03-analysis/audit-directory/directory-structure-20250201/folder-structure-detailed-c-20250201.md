@@ -24,7 +24,7 @@
 │   │   └── [EMPTY]Pets/
 │   ├── Legal & Estate/
 │   ├── Visa Applications/
-│   │   ├── 2010 Studnet Visa Cancellation/
+│   │   ├── 2010 Student Visa Cancellation/
 │   │   ├── 2011 Student Visa Renewing/
 │   │   ├── 2013–2023 Parents Tourist 600 Visa/
 │   │   ├── 2014 Student Visa Extension/

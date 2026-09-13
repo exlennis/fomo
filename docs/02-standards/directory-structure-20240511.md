@@ -3,6 +3,8 @@
 *Last Updated: 20240511*
 
 ### iCloud Drive
+
+```text
 .
 ├── Desktop
 ├── Documents/
@@ -53,9 +55,11 @@
 │   ├── Screens
 │   ├── Scriptable
 │   └── Shortcuts
-
+```
 
 ### Dropbox
+
+```text
 .
 ├── -DESIGN-/
 │   ├── Assets/
@@ -133,3 +137,4 @@
     ├── hotkeys
     ├── search
     └── templates
+```

@@ -209,7 +209,7 @@ The FOMO structure integrates with standard macOS directories:
 
 The complete logical directory structure provides a clean, purpose-driven organisation:
 
-```
+```text
 ~/                                  # Home directory
 ├── Projects/                       # Container for active work (Level 1: Capitalised)
 │    ├── dev/                       # Development projects (Level 2+: lowercase-kebab)
@@ -260,8 +260,8 @@ The complete logical directory structure provides a clean, purpose-driven organi
 
 The physical storage locations are mapped to the logical structure through symlinks:
 
-| Physical Location         | Logical Path                |
-|:--------------------------|:----------------------------|
+| Physical Location          | Logical Path                |
+|:---------------------------|:----------------------------|
 | Local Dev Projects →      | `~/Projects/dev/`           |
 | Dropbox/Projects →        | `~/Projects/design/`        |
 | Dropbox/Education →       | `~/Projects/education/`     |
@@ -279,7 +279,7 @@ The cloud storage maintains its organisational structure, with the FOMO system c
 
 **Dropbox:**
 
-```
+```text
 Dropbox/
 ├── Assets/                         # Formerly -DESIGN-
 │    ├── assets-library/            # Eagle managed library
@@ -294,7 +294,7 @@ Dropbox/
 
 **iCloud Drive:**
 
-```
+```text
 iCloud Drive/
 ├── Desktop/                        # Synced desktop (standard)
 ├── Documents/                      # Synced documents (standard)
@@ -314,7 +314,7 @@ iCloud Drive/
 
 Media content is structured on network storage for easy access and management:
 
-```
+```text
 Media/                              # Network attached (renamed from ∆Media)
 ├── Books/                          # Calibre managed library
 ├── Movies/                         # Plex managed library
@@ -373,14 +373,14 @@ Before implementing the structure:
 
 Create the base directory structure:
 
-    ```bash
-    # Create the core FOMO directories
-    mkdir -p ~/Projects/{dev,design,education}
-    mkdir -p ~/Resources/{assets,catalogues,inspirations,references,templates}
-    mkdir -p ~/Knowledge/{vault,docs}
-    mkdir -p ~/System/{configs,scripts,search}
-    mkdir -p ~/Downloads/{inbox,processing,archive}
-    ```
+```bash
+# Create the core FOMO directories
+mkdir -p ~/Projects/{dev,design,education}
+mkdir -p ~/Resources/{assets,catalogues,inspirations,references,templates}
+mkdir -p ~/Knowledge/{vault,docs}
+mkdir -p ~/System/{configs,scripts,search}
+mkdir -p ~/Downloads/{inbox,processing,archive}
+```
 
 ### 7.3 Symlink Establishment
 
@@ -388,41 +388,41 @@ Create the base directory structure:
 
 1. Prepare target locations:
 
-    ```bash
-    # Check and backup existing directories before creating symlinks
-    for dir in "$HOME/Downloads" "$HOME/Resources/assets" "$HOME/Resources/inspirations" "$HOME/Resources/references" "$HOME/Projects/design" "$HOME/Projects/education" "$HOME/Knowledge/vault"; do
-       if [ -e "$dir" ] && [ ! -L "$dir" ]; then
-           mv "$dir" "${dir}-backup-$(date +%Y%m%d)" 2>/dev/null
-           echo "Backed up existing directory: $dir"
-       fi
-    done
-    ```
+```bash
+# Check and backup existing directories before creating symlinks
+for dir in "$HOME/Downloads" "$HOME/Resources/assets" "$HOME/Resources/inspirations" "$HOME/Resources/references" "$HOME/Projects/design" "$HOME/Projects/education" "$HOME/Knowledge/vault"; do
+    if [ -e "$dir" ] && [ ! -L "$dir" ]; then
+        mv "$dir" "${dir}-backup-$(date +%Y%m%d)" 2>/dev/null
+        echo "Backed up existing directory: $dir"
+    fi
+done
+```
 
 2. Set up the symlinks from cloud to local directories:
 
-    ```bash
-    # Dropbox symlinks
-    ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/Assets" "$HOME/Resources/assets"
-    ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/Inspirations" "$HOME/Resources/inspirations"
-    ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/References" "$HOME/Resources/references"
-    ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/Projects" "$HOME/Projects/design"
-    ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/Education" "$HOME/Projects/education"
-        
-    # iCloud symlinks
-    ln -sf "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notes" "$HOME/Knowledge/vault"
-    ln -sf "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Downloads" "$HOME/Downloads"
-    ```
+```bash
+# Dropbox symlinks
+ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/Assets" "$HOME/Resources/assets"
+ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/Inspirations" "$HOME/Resources/inspirations"
+ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/References" "$HOME/Resources/references"
+ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/Projects" "$HOME/Projects/design"
+ln -sf "$HOME/Library/CloudStorage/Dropbox-Personal/Education" "$HOME/Projects/education"
     
+# iCloud symlinks
+ln -sf "$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notes" "$HOME/Knowledge/vault"
+ln -sf "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Downloads" "$HOME/Downloads"
+```
+
 3. Verify symlinks 
 
-    ```bash
-    # Quick verification
-    for link in "$HOME/Downloads" "$HOME/Resources/assets" "$HOME/Resources/inspirations" "$HOME/Resources/references" "$HOME/Projects/design" "$HOME/Projects/education" "$HOME/Knowledge/vault"; do
-       if [ ! -L "$link" ]; then
-           echo "Warning: $link is not a symlink - check for issues"
-       fi
-    done
-    ```
+```bash
+# Quick verification
+for link in "$HOME/Downloads" "$HOME/Resources/assets" "$HOME/Resources/inspirations" "$HOME/Resources/references" "$HOME/Projects/design" "$HOME/Projects/education" "$HOME/Knowledge/vault"; do
+    if [ ! -L "$link" ]; then
+        echo "Warning: $link is not a symlink - check for issues"
+    fi
+done
+```
 
 > Note: The Desktop and Documents symlinks are typically created automatically when enabling iCloud Drive in macOS. This implementation focuses on creating the remaining symlinks. 
 > Troubleshooting: For symlink issues, refer to section 11.3 Troubleshooting Common Issues.
@@ -431,43 +431,43 @@ Create the base directory structure:
 
 Add quick navigation functions to your `.zshrc`, `.bashrc`, or `.bash_profile`:
 
-    ```bash
-    # Add to your shell configuration file (.zshrc, .bashrc, or .bash_profile)
-    # Quick navigation to major areas
-    alias proj="cd ~/Projects"
-    alias res="cd ~/Resources"
-    alias know="cd ~/Knowledge"
-    alias sys="cd ~/System"
-    alias dl="cd ~/Downloads"
-        
-    # Project jumping function
-    proj() {
-        local base="$HOME/Projects"
-        if [ -z "$1" ]; then
-            cd "$base"
+```bash
+# Add to your shell configuration file (.zshrc, .bashrc, or .bash_profile)
+# Quick navigation to major areas
+alias proj="cd ~/Projects"
+alias res="cd ~/Resources"
+alias know="cd ~/Knowledge"
+alias sys="cd ~/System"
+alias dl="cd ~/Downloads"
+
+# Project jumping function
+proj() {
+    local base="$HOME/Projects"
+    if [ -z "$1" ]; then
+        cd "$base"
+    else
+        local matches=($(find "$base" -maxdepth 2 -type d -name "*$1*"))
+        local count=${#matches[@]}
+
+        if [ "$count" -eq 0 ]; then
+            echo "No matching project found."
+        elif [ "$count" -eq 1 ]; then
+            cd "${matches[0]}"
         else
-            local matches=($(find "$base" -maxdepth 2 -type d -name "*$1*"))
-            local count=${#matches[@]}
-        
-            if [ "$count" -eq 0 ]; then
-                echo "No matching project found."
-            elif [ "$count" -eq 1 ]; then
-                cd "${matches[0]}"
+            echo "Multiple projects found:"
+            for i in "${!matches[@]}"; do
+                echo "$((i+1)): ${matches[$i]}"
+            done
+            read -p "Enter the number of the project to navigate to: " choice
+            if [[ "$choice" -ge 1 && "$choice" -le "$count" ]]; then
+                cd "${matches[$((choice-1))]}"
             else
-                echo "Multiple projects found:"
-                for i in "${!matches[@]}"; do
-                    echo "$((i+1)): ${matches[$i]}"
-                done
-                read -p "Enter the number of the project to navigate to: " choice
-                if [[ "$choice" -ge 1 && "$choice" -le "$count" ]]; then
-                    cd "${matches[$((choice-1))]}"
-                else
-                    echo "Invalid selection."
-                fi
+                echo "Invalid selection."
             fi
         fi
-    }
-    ```
+    fi
+}
+```
 
 ### 7.5 Phased Implementation
 
@@ -575,65 +575,65 @@ After migrating each section:
 
 Use this script to establish consistent structure across machines:
 
-    ```bash
-    #!/bin/bash
-      # fomo-directory-setup.sh
-      
-      # Determine machine type for machine-specific settings
-      HOSTNAME=$(hostname)
-      case "$HOSTNAME" in
-      "MacMini"*)
-         MACHINE_TYPE="server"
-         ;;
-      "Work"*)
-         MACHINE_TYPE="work"
-         ;;
-      *)
-         MACHINE_TYPE="personal"
-         ;;
-      esac
-    
-    # Set base paths (adjust if needed per machine)
-    DROPBOX_PATH="$HOME/Library/CloudStorage/Dropbox-Personal"
-    ICLOUD_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
-    OBSIDIAN_PATH="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notes"
-    
-    # Create base directories
-    mkdir -p "$HOME/Projects"/{dev,design,education}
-    mkdir -p "$HOME/Resources"/{assets,catalogues,inspirations,references,templates}
-    mkdir -p "$HOME/Knowledge"/{vault,docs}
-    mkdir -p "$HOME/System"/{configs,scripts,search}
-    mkdir -p "$HOME/Downloads"/{inbox,processing,archive}
-    
-    # Set up symlinks based on machine type
-    echo "Setting up for $MACHINE_TYPE machine..."
-    
-    # Common symlinks across all machines
-    ln -sf "$DROPBOX_PATH/Assets" "$HOME/Resources/assets"
-    ln -sf "$DROPBOX_PATH/Inspirations" "$HOME/Resources/inspirations"
-    ln -sf "$DROPBOX_PATH/References" "$HOME/Resources/references"
-    ln -sf "$DROPBOX_PATH/Projects" "$HOME/Projects/design"
-    ln -sf "$DROPBOX_PATH/Education" "$HOME/Projects/education"
-    ln -sf "$OBSIDIAN_PATH" "$HOME/Knowledge/vault"
-    ln -sf "$ICLOUD_PATH/Downloads" "$HOME/Downloads"
-    
-    # Machine-specific configurations
-    if [ "$MACHINE_TYPE" = "server" ]; then
-    # Server-specific settings
-    echo "Adding server-specific configurations..."
-    # Additional server-specific symlinks
-    elif [ "$MACHINE_TYPE" = "work" ]; then
-    # Work machine settings
-    echo "Adding work machine configurations..."
-    # Work-specific configurations
-    else
-    # Personal machine gets everything
-    echo "Adding personal machine configurations..."
-    # Full personal setup
-    fi
-    
-    echo "Directory structure created successfully for $MACHINE_TYPE!"
-    ```
+```bash
+#!/bin/bash
+# fomo-directory-setup.sh
+
+# Determine machine type for machine-specific settings
+HOSTNAME=$(hostname)
+case "$HOSTNAME" in
+"MacMini"*)
+    MACHINE_TYPE="server"
+    ;;
+"Work"*)
+    MACHINE_TYPE="work"
+    ;;
+*)
+    MACHINE_TYPE="personal"
+    ;;
+esac
+
+# Set base paths (adjust if needed per machine)
+DROPBOX_PATH="$HOME/Library/CloudStorage/Dropbox-Personal"
+ICLOUD_PATH="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
+OBSIDIAN_PATH="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notes"
+
+# Create base directories
+mkdir -p "$HOME/Projects"/{dev,design,education}
+mkdir -p "$HOME/Resources"/{assets,catalogues,inspirations,references,templates}
+mkdir -p "$HOME/Knowledge"/{vault,docs}
+mkdir -p "$HOME/System"/{configs,scripts,search}
+mkdir -p "$HOME/Downloads"/{inbox,processing,archive}
+
+# Set up symlinks based on machine type
+echo "Setting up for $MACHINE_TYPE machine..."
+
+# Common symlinks across all machines
+ln -sf "$DROPBOX_PATH/Assets" "$HOME/Resources/assets"
+ln -sf "$DROPBOX_PATH/Inspirations" "$HOME/Resources/inspirations"
+ln -sf "$DROPBOX_PATH/References" "$HOME/Resources/references"
+ln -sf "$DROPBOX_PATH/Projects" "$HOME/Projects/design"
+ln -sf "$DROPBOX_PATH/Education" "$HOME/Projects/education"
+ln -sf "$OBSIDIAN_PATH" "$HOME/Knowledge/vault"
+ln -sf "$ICLOUD_PATH/Downloads" "$HOME/Downloads"
+
+# Machine-specific configurations
+if [ "$MACHINE_TYPE" = "server" ]; then
+# Server-specific settings
+echo "Adding server-specific configurations..."
+# Additional server-specific symlinks
+elif [ "$MACHINE_TYPE" = "work" ]; then
+# Work machine settings
+echo "Adding work machine configurations..."
+# Work-specific configurations
+else
+# Personal machine gets everything
+echo "Adding personal machine configurations..."
+# Full personal setup
+fi
+
+echo "Directory structure created successfully for $MACHINE_TYPE!"
+```
 
 ### 9.2 Machine-Specific Considerations
 
@@ -767,35 +767,35 @@ Perform these checks to ensure system integrity:
     - Review and update automation rules
     - Check compliance with naming conventions
 
-    ```bash
-    #!/bin/bash
-    # fomo-symlink-check.sh
-        
-    # Array of symlinks to check
-    symlinks=(
-      "$HOME/Resources/assets"
-      "$HOME/Resources/inspirations"
-      "$HOME/Resources/references"
-      "$HOME/Projects/design"
-      "$HOME/Projects/education"
-      "$HOME/Knowledge/vault"
-      "$HOME/Downloads"
-    )
+```bash
+#!/bin/bash
+# fomo-symlink-check.sh
     
-    # Check each symlink
-    for link in "${symlinks[@]}"; do
-      if [[ ! -L "$link" ]]; then
-        echo "Error: $link is not a symlink"
-      else
-        target=$(readlink "$link")
-        if [[ ! -d "$target" ]]; then
-          echo "Error: $link points to a non-existent directory: $target"
-        fi
-      fi
-    done
-        
-    echo "Symlink check complete."
-    ```
+# Array of symlinks to check
+symlinks=(
+    "$HOME/Resources/assets"
+    "$HOME/Resources/inspirations"
+    "$HOME/Resources/references"
+    "$HOME/Projects/design"
+    "$HOME/Projects/education"
+    "$HOME/Knowledge/vault"
+    "$HOME/Downloads"
+)
+
+# Check each symlink
+for link in "${symlinks[@]}"; do
+    if [ ! -L "$link" ]; then
+    echo "Error: $link is not a symlink"
+    else
+    target=$(readlink "$link")
+    if [ ! -d "$target" ]; then
+        echo "Error: $link points to a non-existent directory: $target"
+    fi
+    fi
+done
+
+echo "Symlink check complete."
+```
 
 ### 11.2 Backup Management
 
@@ -865,70 +865,74 @@ Guidelines for evolving the system over time:
 
 ### 12.1 Design Workflow Example
 
-   ```
-   # Starting a new client project
-   mkdir -p ~/Projects/design/acme-corp/website
-   mkdir -p ~/Projects/design/acme-corp/website/{briefs,design,assets,production}
-   
-   # Creating design assets
-   touch ~/Projects/design/acme-corp/website/assets/acme-logo-primary-v01.ai
-   touch ~/Projects/design/acme-corp/website/assets/acme-header-homepage-v01.psd
-   
-   # Design handoff for development
-   mkdir -p ~/Projects/design/acme-corp/website/production
-   touch ~/Projects/design/acme-corp/website/production/acme-website-homepage-handoff-v01.sketch
-   ```
+```bash
+#!/bin/bash
+# Starting a new client project
+mkdir -p ~/Projects/design/acme-corp/website
+mkdir -p ~/Projects/design/acme-corp/website/{briefs,design,assets,production}
+
+# Creating design assets
+touch ~/Projects/design/acme-corp/website/assets/acme-logo-primary-v01.ai
+touch ~/Projects/design/acme-corp/website/assets/acme-header-homepage-v01.psd
+
+# Design handoff for development
+mkdir -p ~/Projects/design/acme-corp/website/production
+touch ~/Projects/design/acme-corp/website/production/acme-website-homepage-handoff-v01.sketch
+```
 
 ### 12.2 Development Workflow Example
 
-   ```
-   # Starting a new development project
-   cd ~/Projects/dev
-   git clone https://github.com/username/project-name.git
-   cd project-name
-   
-   # Setting up project structure
-   mkdir -p src/{components,utils,styles}
-   mkdir -p docs
-   touch README.md
-   
-   # Working on features
-   touch src/components/Button.tsx
-   touch src/utils/api-client.js
-   ```
+```bash
+#!/bin/bash
+# Starting a new development project
+cd ~/Projects/dev
+git clone https://github.com/username/project-name.git
+cd project-name
+
+# Setting up project structure
+mkdir -p src/{components,utils,styles}
+mkdir -p docs
+touch README.md
+
+# Working on features
+touch src/components/Button.tsx
+touch src/utils/api-client.js
+```
 
 ### 12.3 Knowledge Management Example
 
-   ```
-   # Creating new notes
-   cd ~/Knowledge/vault/notes
-   touch project-research-fomo.md
-   mkdir -p reference/design-systems
-   touch reference/design-systems/atomic-design-principles.md
-   
-   # Organising documentation
-   cd ~/Knowledge/docs
-   mkdir -p tutorials/css
-   touch tutorials/css/grid-layout-guide.md
-   ```
+```bash
+#!/bin/bash
+# Creating new notes
+cd ~/Knowledge/vault/notes
+touch project-research-fomo.md
+mkdir -p reference/design-systems
+touch reference/design-systems/atomic-design-principles.md
+
+# Organising documentation
+cd ~/Knowledge/docs
+mkdir -p tutorials/css
+touch tutorials/css/grid-layout-guide.md
+```
 
 ### 12.4 Downloads Processing Example
 
-   ```
-   # Browser downloads file to inbox
-   # ~/Downloads/inbox/random-download.pdf
-   
-   # Hazel moves to processing for renaming
-   # ~/Downloads/processing/random-download.pdf → client-presentation-20250301.pdf
-   
-   # File is moved to final destination
-   # ~/Projects/design/client/presentations/client-presentation-20250301.pdf
-   
-   # If file isn't moved within 30 days, it goes to archive
-   # ~/Downloads/archive/client-presentation-20250301.pdf
-   
-   # After 30 days in archive, it's automatically deleted
-   ```
+```bash
+#!/bin/bash
+# Browser downloads file to inbox
+# ~/Downloads/inbox/random-download.pdf
+
+# Hazel moves to processing for renaming
+# ~/Downloads/processing/random-download.pdf → client-presentation-20250301.pdf
+
+# File is moved to final destination
+# ~/Projects/design/client/presentations/client-presentation-20250301.pdf
+
+# If file isn't moved within 30 days, it goes to archive
+# ~/Downloads/archive/client-presentation-20250301.pdf
+
+# After 30 days in archive, it's automatically deleted
+```
 
 ## 13. Integration with FOMO Documents
 
